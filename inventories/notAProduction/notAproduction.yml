@@ -1,39 +1,16 @@
 all:
   vars:
     ansible_connection: ssh
-    ansible_user: kpaczos
-    proxy_env:
-      http_proxy: "http://localhost:4444/"
+    #FOR SSH CONNECT
+    ansible_user: user
+
   children:
     testServers:
       hosts:
-        172.30.12.16:
-        172.30.12.181:
-        172.30.12.19:
-        10.60.213.82:
-        10.60.213.10:
-        10.60.212.55:
-        10.60.212.56:
-        10.60.212.57:
-        10.60.212.90:
-        10.60.212.91:
-        10.60.212.92:
-        10.60.212.93:
-        10.60.212.94:
-        10.60.212.95:
-        10.60.212.96:
-        10.60.212.97:
-        10.60.12.223:
-        10.0.140.112:
-        10.0.140.136:
-        10.0.140.137:
-        10.0.140.132:
-        10.0.140.134:
-        10.0.140.135:
-        10.0.140.117:
-        10.0.140.118:
-        10.0.140.119:
-        10.0.140.130:
+        1.2.3.4:
+        5.6.7.8:
+        9.10.11.12:
+        13.14.15.16:
       vars:
         #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p {{ ansible_user }}@{{ inventory_hostname }}"'
         ansible_ssh_extra_args: '-R 4444:localhost:8080'
