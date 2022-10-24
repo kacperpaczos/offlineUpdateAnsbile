@@ -4,5 +4,60 @@
   debug:
     msg: "{{ ansible_ssh_host }} IS {{ ansible_distribution }} {{ ansible_facts['lsb']['release'] }}"
 
-- name: EXECTUTE ORDER 66
-  ansible.builtin.command: date
+- name: CHECK CONNECT TO THE INTERNET
+  ansible.builtin.uri:
+    url: "http://www.google.com/"
+    timeout: 3
+  register: ping
+  ignore_errors: yes
+  environment:
+    http_proxy: "http://localhost:4444/"
+
+- name: STATUS CONNECTION TO THE INTERNET
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} IS CONNECTED TO THE INTERNET BY 3PROXY!"
+  when: ping.status | int  == 200
+
+- name: ENSURE THAT '/etc/apt/apt.conf' EXIST
+  copy:
+    content: ""
+    dest: "/etc/apt/apt.conf"
+    force: no
+    group: root
+    owner: root
+    mode: 0751
+  become: true
+
+- name: SEARCHING '/etc/apt/apt.conf' FOR A 'Acquire::http::Proxy http://localhost:4444/;'
+  shell: cat /etc/apt/apt.conf
+  register: user_accts
+  become: true
+
+- name: PROXY STATUS
+  debug:
+    msg: "HTTP PROXY IS ENABLED FOR APT ON {{ ansible_ssh_host }}"
+  when: user_accts.stdout.find('Acquire::http::Proxy "http://localhost:4444/";') != -1
+
+- name: ADDING PROXY TO APT
+  lineinfile:
+    dest: "/etc/apt/apt.conf"
+    line: 'Acquire::http::Proxy "http://localhost:4444/";'
+    create: yes
+  become: true
+  when: user_accts.stdout.find('Acquire::http::Proxy "http://localhost:4444/";') == -1
+
+- name: INSTALL LATEST VERSION OF "open-vm-tools" BY APT
+  ansible.builtin.apt:
+    name: open-vm-tools
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ping.status | int  == 200
+  register: installed
+  ignore_errors: yes
+
+- name: APT-GET ERROR
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} WAS APT-GET ERROR! {{ installed }}"
+  when: installed.failed == true | bool
+  ignore_errors: yes

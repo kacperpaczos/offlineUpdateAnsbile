@@ -1,11 +1,12 @@
 ---
 # file: playbook.yml
+
 - name: Running Roles
   hosts: testServers
   roles:
-    - checkPlatformAndVersion
-    - checkConnectivity
+    #- checkPlatformAndVersion
+    #- checkConnectivity
     #- upgradeOffline
-    #- updateBy3Proxy
+    - updateBy3Proxy
 
 
