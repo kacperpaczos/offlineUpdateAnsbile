@@ -3,3 +3,7 @@
 - name: SYSTEM DETAILS
   debug:
     msg: "{{ ansible_ssh_host }} IS {{ ansible_distribution }} {{ ansible_facts['lsb']['release'] }}"
+
+- name: "SSH"
+  debug:
+    msg: "ssh -W %h:%p {{ ansible_user }}@{{ inventory_hostname }} -R 4444:localhost:8080"

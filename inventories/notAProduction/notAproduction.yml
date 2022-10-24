@@ -1,9 +1,11 @@
-[all:vars]
-ansible_connection=ssh
-ansible_user=user
-
-[testServers]
-1.2.3.4
-
-[testServers:vars]
-ansible_ssh_common_args='-o ProxyCommand="ssh -R 4444:localhost:8080 -W %h:%p -q {{ ansible_user }}@{{ testServers }}"'
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: user
+  children:
+    testServers:
+      hosts:
+        172.30.12.16:
+        172.30.12.181:
+      vars:
+        ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p {{ ansible_user }}@{{ inventory_hostname }} -R 4444:localhost:8080"'

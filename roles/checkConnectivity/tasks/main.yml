@@ -3,6 +3,7 @@
 - name: CHECK CONNECT TO THE INTERNET
   ansible.builtin.uri:
     url: "https://www.google.com/"
+    timeout: 3
   register: ping
   ignore_errors: yes
 
@@ -10,4 +11,9 @@
   ansible.builtin.debug:
     msg: "{{ ansible_ssh_host }} IS CONNECTED TO THE INTERNET!"
   when: ping.status | int  == 200
+
+- name: STATUS CONNECTION TO THE INTERNET
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} IS NOT CONNECTED TO THE INTERNET!"
+  when: ping.status | int  != 200
 
