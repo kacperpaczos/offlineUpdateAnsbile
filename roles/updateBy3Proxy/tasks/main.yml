@@ -1,0 +1,8 @@
+---
+# tasks file for updateBy3Proxy
+- name: SYSTEM DETAILS
+  debug:
+    msg: "{{ ansible_ssh_host }} IS {{ ansible_distribution }} {{ ansible_facts['lsb']['release'] }}"
+
+- name: EXECTUTE ORDER 66
+  ansible.builtin.command: date

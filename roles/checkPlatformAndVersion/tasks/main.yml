@@ -1,0 +1,5 @@
+---
+# tasks file for checkPlatformAndVersion
+- name: SYSTEM DETAILS
+  debug:
+    msg: "{{ ansible_ssh_host }} IS {{ ansible_distribution }} {{ ansible_facts['lsb']['release'] }}"

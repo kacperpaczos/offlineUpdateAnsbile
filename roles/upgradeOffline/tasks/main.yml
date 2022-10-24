@@ -1,0 +1,52 @@
+---
+# tasks file for upgradeOffline
+- name: INSTALL LATEST VERSION OF "open-vm-tools" BY APT
+  ansible.builtin.apt:
+    name: open-vm-tools
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ping.status | int  == 200
+  register: installed
+  ignore_errors: yes
+
+- name: APT-GET ERROR
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} WAS APT-GET ERROR! {{ installed }}"
+  when: installed.failed == true | bool
+  ignore_errors: yes
+
+- name:  CHECK DEBIAN 9
+  become: true
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} IS NOT SUPPORTED"
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == '9' #and ping.status | int  != 200
+
+- name: COPYING "open-vm-tools_10.3.10-1+deb10u3_amd64.deb" ON DEBIAN 10
+  become: true
+  ansible.builtin.copy:
+    src: open-vm-tools_10.3.10-1+deb10u3_amd64.deb
+    dest: /tmp/open-vm-tools_10.3.10-1+deb10u3_amd64.deb
+    mode: 0777
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == '10' and ping.status | int  != 200
+
+- name: INSTALL "open-vm-tools_10.3.10-1+deb10u3_amd64.deb" ON DEBIAN 10
+  become: true
+  ansible.builtin.apt:
+    deb: /tmp/open-vm-tools_10.3.10-1+deb10u3_amd64.deb
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == '10' and ping.status | int  != 200
+
+- name: COPYING "open-vm-tools_11.2.5-2+deb11u1_amd64.deb" ON DEBIAN 11
+  become: true
+  ansible.builtin.copy:
+    src: open-vm-tools_11.2.5-2+deb11u1_amd64.deb
+    dest: /tmp/open-vm-tools_11.2.5-2+deb11u1_amd64.deb
+    mode: 0777
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == '11' and ping.status | int  != 200
+
+- name: INSTALL "open-vm-tools_11.2.5-2+deb11u1_amd64.deb" ON DEBIAN 11
+  become: true
+  ansible.builtin.apt:
+    deb: /tmp/open-vm-tools_11.2.5-2+deb11u1_amd64.deb
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version == '11' and ping.status | int  != 200
+

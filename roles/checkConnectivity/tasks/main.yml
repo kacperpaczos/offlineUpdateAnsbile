@@ -1,0 +1,13 @@
+---
+# tasks file for checkConnectivity
+- name: CHECK CONNECT TO THE INTERNET
+  ansible.builtin.uri:
+    url: "https://www.google.com/"
+  register: ping
+  ignore_errors: yes
+
+- name: STATUS CONNECTION TO THE INTERNET
+  ansible.builtin.debug:
+    msg: "{{ ansible_ssh_host }} IS CONNECTED TO THE INTERNET!"
+  when: ping.status | int  == 200
+
