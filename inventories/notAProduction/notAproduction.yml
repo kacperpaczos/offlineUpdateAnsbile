@@ -2,15 +2,59 @@ all:
   vars:
     ansible_connection: ssh
     #FOR SSH CONNECT
-    ansible_user: user
+    ansible_user: kpaczos
+    #ansible_ssh_pass: root
 
   children:
     testServers:
       hosts:
-        1.2.3.4:
-        5.6.7.8:
-        9.10.11.12:
-        13.14.15.16:
+        172.30.12.16:
+        #brokery root root
+        #10.60.212.200: #k1
+        #10.60.212.241: #k2
+        #10.60.212.30: #k3
+        # kontolery root root
+        #10.60.36.237: #k4
+        #10.60.36.69: #k5
+        #notAproduction.yml
+        #10.60.212.208: #k6
+        #kontigo środowisko testowe
+        172.30.12.181:
+        #Srodowisak testowe Duży Ben EC
+        172.30.12.19:
+        #LeEclerc
+        10.60.213.82:
+        #10.60.212.217: #oracle
+        #BigStar środoiwsko testowe
+        10.60.213.10:
+        #HDS (Lagardere) środowisko testowe
+        #10.60.212.56:
+        #10.60.212.55:
+        #10.60.212.57:
+        10.60.212.90:
+        #10.60.212.91:
+        #10.60.212.92:
+        #10.60.212.93:
+        #10.60.212.94:
+        #10.60.212.95:
+        #10.60.212.96:
+        #10.60.212.97:
+        10.60.12.223:
+        #MediaExpert - środowisko testowe (TERG)
+        10.0.140.112:
+        #10.0.140.136:
+        #10.0.140.137:
+        #10.0.140.132:
+        #10.0.140.134:
+        10.0.140.115:
+        #10.0.140.135:
+        #10.0.140.117:
+        #10.0.140.118:
+        #10.0.140.119:
+        #10.0.140.130:
+        #10.0.140.131:
+        #10.65.0.199:
       vars:
         #ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p {{ ansible_user }}@{{ inventory_hostname }}"'
         ansible_ssh_extra_args: '-R 4444:localhost:8080'
+        #ansible_ssh_extra_args: '-l vpn.kpaczos@ec'

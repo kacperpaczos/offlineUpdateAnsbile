@@ -1,12 +1,23 @@
 ---
 # file: playbook.yml
-
 - name: Running Roles
   hosts: testServers
+  #hosts: prodServers
+
   roles:
     #- checkPlatformAndVersion
     #- checkConnectivity
     #- upgradeOffline
-    - updateBy3Proxy
+    #- addUser
+    #- kafka-kraft
+    #- updateBy3Proxy
+    #- listOfUsers
+    #- addGroupsToUser
+    #- findFile
+    #- checkStatusOfService
+    - replaceLineInFile
+    #- changeDirsPrivileges
+    #- updateBy3Proxy
+    #- findLineInFiles
 
 

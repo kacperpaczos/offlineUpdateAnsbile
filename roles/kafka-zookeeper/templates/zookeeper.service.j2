@@ -1,0 +1,26 @@
+[Unit]
+Description=Apache ZooKeeper Server
+Documentation=http://kafka.apache.org/documentation.html
+#Requires=zookeeper.service
+Requires=network.target
+After=network.target
+
+[Service]
+# Przy HEAPIE ustawiamy poziomy zajetosci zasobow
+#Environment="KAFKA_HEAP_OPTS=-Xmx1G -Xms1G"
+#Environment="LOG_DIR=/var/log/forcom/kafka"
+Type=simple
+Environment={{ ZooKeeperEnv }}
+ExecStart={{ ZooKeeperExecStart }}
+ExecStop={{ ZooKeeperExecStop }}
+WorkingDirectory=/opt/forcom/installed/kafka_2.13-3.3.1
+User={{ kafka_user }}
+Group={{ kafka_group }}
+Restart=on-failure
+#StandardOutput=file:/var/log/kafka/SystemDKafkaStandardOutput.log
+#StandardError=file:/var/log/kafka/SystemDKafkaErrorOutput.log
+StandardOutput=null
+StandardError=null
+[Install]
+WantedBy=multi-user.target
+Alias=zooKeeper.service

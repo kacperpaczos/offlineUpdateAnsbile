@@ -17,21 +17,22 @@
   ansible.builtin.debug:
     msg: "{{ ansible_ssh_host }} IS CONNECTED TO THE INTERNET BY 3PROXY!"
   when: ping.status | int  == 200
+  ignore_errors: yes
 
 - name: ENSURE THAT '/etc/apt/apt.conf' EXIST
   copy:
-    content: ""
+    content: "Acquire::http::Proxy http://localhost:4444/;"
     dest: "/etc/apt/apt.conf"
     force: no
     group: root
     owner: root
     mode: 0751
-  become: true
+  become: yes
 
 - name: SEARCHING '/etc/apt/apt.conf' FOR A 'Acquire::http::Proxy http://localhost:4444/;'
   shell: cat /etc/apt/apt.conf
   register: user_accts
-  become: true
+  become: yes
 
 - name: PROXY STATUS
   debug:
@@ -43,29 +44,27 @@
     dest: "/etc/apt/apt.conf"
     line: 'Acquire::http::Proxy "http://localhost:4444/";'
     create: yes
-  become: true
+  become: yes
   when: user_accts.stdout.find('Acquire::http::Proxy "http://localhost:4444/";') == -1
+ #TODO USUN TO CO DODAŁES
 
-#- name: INSTALL LATEST VERSION OF "open-vm-tools" BY APT
-#  ansible.builtin.apt:
-#    name: open-vm-tools
-#    state: latest
-#    update_cache: yes
-#  become: yes
-#  when: ping.status | int  == 200
-#  register: installed
-#  ignore_errors: yes
-
-- name: INSTALL LATEST VERSION OF "cifs-utils" BY APT
+- name: INSTALL LATEST VERSION OF "ntp" BY APT
   ansible.builtin.apt:
-    name: cifs-utils
+    name: ntp
     state: latest
     update_cache: yes
   become: yes
-  #when: ping.status | int  == 200
+  when: ping.status | int  == 200
   register: installed
   ignore_errors: yes
 
+- name: UPDATE ALL PACKAGES TO THEIR LATEST VERSION
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  ignore_errors: yes
+  become: yes
 
 - name: APT-GET ERROR
   ansible.builtin.debug:
@@ -73,10 +72,50 @@
   when: installed.failed == true | bool
   ignore_errors: yes
 
-- name: DELETE PROXY TO APT
-  lineinfile:
-    path: /etc/apt/apt.conf
-    regexp: '^(.*)Acquire::http::Proxy "http://localhost:4444/";(.*)$' #Linia do zmiany
-    line: '' #linia po zmianie
-    backrefs: yes
+- name: SHOW date
+  command: date
+  register: date
+  become: yes
+
+- debug: msg="{{ date.stdout }}"
+
+- name: SHOW timedatectl
+  command: timedatectl
+  register: time
+  become: yes
+
+- debug: msg="{{ time.stdout }}"
+
+- name: SET TIMEZONE
+  command: timedatectl set-timezone Europe/Warsaw
+  become: yes
+
+- name: STOP NTP
+  ansible.builtin.systemd:
+    name: ntp
+    state: stopped
+
+- name: Get Service Status
+  ansible.builtin.systemd:
+    name: "ntp"
+  register: pg_service_status
+
+- debug:
+    var: pg_service_status.status.ActiveState
+
+- name: UPDATE NTP
+  command: sudo ntpd -gq
+  register: ntp
+  become: yes
+
+- debug: msg="{{ ntp.stdout }}"
+
+- name: START NTP
+  ansible.builtin.systemd:
+    name: ntp
+    state: started
+
+- name: SHOW timedatectl
+  command: timedatectl
+  register: time
   become: yes
